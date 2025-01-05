@@ -10,6 +10,7 @@ namespace Budzet.Models
         public string? Title { get; set; }
         [Display(Name = "Kwota")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Kwota musi być większa niż zero.")]
+        [Required(ErrorMessage = "Podaj kwotę wpłaty/wypłaty.")]
         public decimal Amount { get; set; }
         [Display(Name = "Kategoria")]
         public int CategoryId { get; set; } // Klucz obcy
@@ -17,6 +18,7 @@ namespace Budzet.Models
         [ForeignKey("CategoryId")]
         public Category? Category { get; set; } // Nawigacja
         [Display(Name = "Data transakcji")]
+        [Required(ErrorMessage = "Data jest wymagana.")]
         public DateTime Date { get; set; }
         [Display(Name = "Typ Trasakcji")]
         [Required(ErrorMessage = "Typ jest wymagany.")]

@@ -6,7 +6,7 @@ namespace Budzet.Models
     {
         public int Id { get; set; }
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
         [Display(Name = "Nazwa kategorii")]
         public string? Name { get; set; }
     }

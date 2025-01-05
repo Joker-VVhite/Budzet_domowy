@@ -22,7 +22,10 @@ namespace Budzet.Controllers
         // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Transaction.ToListAsync());
+            var transactions = await _context.Transaction
+         .Include(t => t.Category) // Załaduj powiązaną kategorię
+         .ToListAsync();
+            return View(transactions);
         }
 
         // GET: Transactions/Details/5
@@ -56,7 +59,7 @@ namespace Budzet.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Amount,Category,Date,Type")] Transaction transaction)
+        public async Task<IActionResult> Create([Bind("Id,Title,Amount,CategoryId,Date,Type")] Transaction transaction)
         {
             if (ModelState.IsValid)
             {
