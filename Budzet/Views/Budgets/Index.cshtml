@@ -1,21 +1,72 @@
-﻿<h1>Budżet</h1>
-<p>Całkowity Budżet: @ViewBag.TotalAmount zł</p>
+﻿@model IEnumerable<Budzet.Models.Transaction>
 
-<h3>Ostatnie transakcje</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-           <th>Kwota</th>          
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in ViewBag.LastTransactions)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Amount</td>              
-            </tr>
+<h2>Podsumowanie Budżetu</h2>
+
+<!-- Sekcja tabeli i wykresu -->
+<div class="row">
+    <!-- Tabela z podsumowaniem budżetu -->
+    <div class="col-md-6">
+        <h3>Całkowity Budżet</h3>
+        <p><strong>@ViewBag.TotalBudget PLN</strong></p>
+
+        <h3>Ostatnie Transakcje</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tytuł</th>
+                    <th>Kwota</th>
+                    <th>Kategoria</th>
+                    <th>Data</th>
+                    <th>Typ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in ViewBag.LastTransactions)
+                {
+                    <tr>
+                        <td>@transaction.Title</td>
+                        <td>@transaction.Amount PLN</td>
+                        <td>@transaction.Category?.Name</td>
+                        <td>@transaction.Date.ToShortDateString()</td>
+                        <td>@transaction.Type</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Wykres -->
+    <div class="col-md-6">
+        <h3>Wydatki według kategorii</h3>
+        <canvas id="budgetChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dane do wykresu
+    const chartLabels = @Html.Raw(Json.Serialize(ViewBag.ChartLabels));
+    const chartData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+    const chartColors = @Html.Raw(Json.Serialize(ViewBag.ChartColors));
+
+    // Inicjalizacja wykresu Chart.js
+    const ctx = document.getElementById('budgetChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: chartLabels, // Kategorie
+            datasets: [{
+                data: chartData, // Suma kwot
+                backgroundColor: chartColors // Losowe kolory
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
         }
-    </tbody>
-</table>
+    });
+</script>

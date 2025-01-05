@@ -22,17 +22,35 @@ namespace Budzet.Controllers
         // GET: Budgets
         public async Task<IActionResult> Index()
         {
-            // Pobierz wszystkie transakcje z bazy danych (jeśli jest dostępna, inaczej pusta lista)
-            var transactions = await _context.Set<Transaction>().ToListAsync();
+            // Pobierz transakcje z załadowanymi kategoriami
+            var transactions = await _context.Transaction
+                .Include(t => t.Category) // Ładujemy kategorię przez relację klucza obcego
+                .ToListAsync();
 
-            // Oblicz całkowity budżet na podstawie transakcji
-            decimal totalAmount = transactions.Where(t => t.Type == "Wpłata").Sum(t => t.Amount) - transactions.Where(t => t.Type == "Wypłata").Sum(t => t.Amount);
+            // Oblicz całkowity budżet
+            decimal totalBudget = transactions
+                .Where(t => t.Type == "Wpłata").Sum(t => t.Amount)
+                - transactions.Where(t => t.Type == "Wypłata").Sum(t => t.Amount);
 
-            // Przekaż do widoku
-            ViewBag.TotalAmount = totalAmount;
-            ViewBag.LastTransactions = transactions.Take(5);  // Ostatnie 5 transakcji
+            // Grupowanie transakcji według kategorii
+            var groupedData = transactions
+                .Where(t => t.Category != null) // Ignoruj transakcje bez kategorii
+                .GroupBy(t => t.Category.Name)
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    Total = g.Sum(t => t.Amount)
+                })
+                .ToList();
 
-            return View();
+            // Przygotowanie danych do ViewBag
+            ViewBag.TotalBudget = totalBudget; // Całkowity budżet
+            ViewBag.LastTransactions = transactions.OrderByDescending(t => t.Date).Take(5); // Ostatnie 5 transakcji
+            ViewBag.ChartLabels = groupedData.Select(g => g.Category).ToArray();
+            ViewBag.ChartData = groupedData.Select(g => g.Total).ToArray();
+            ViewBag.ChartColors = groupedData.Select(_ => $"#{new Random().Next(0x1000000):X6}").ToArray(); // Losowe kolory
+
+            return View(transactions); // Przekazujemy transakcje do widoku
         }
 
         public async Task<IActionResult> Details(int? id)
