@@ -10,26 +10,22 @@ using Budzet.Models;
 
 namespace Budzet.Controllers
 {
-    public class TransactionsController : Controller
+    public class PeopleController : Controller
     {
         private readonly BudzetContext _context;
 
-        public TransactionsController(BudzetContext context)
+        public PeopleController(BudzetContext context)
         {
             _context = context;
         }
 
-        // GET: Transactions
+        // GET: People
         public async Task<IActionResult> Index()
         {
-            var transactions = await _context.Transaction
-         .Include(t => t.Category) // Załaduj powiązaną kategorię
-         .Include(t => t.Person) // Ładowanie osoby
-         .ToListAsync();
-            return View(transactions);
+            return View(await _context.Person.ToListAsync());
         }
 
-        // GET: Transactions/Details/5
+        // GET: People/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,44 +33,39 @@ namespace Budzet.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction
+            var person = await _context.Person
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (transaction == null)
+            if (person == null)
             {
                 return NotFound();
             }
-            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", transaction.CategoryId);
-            ViewBag.Person = new SelectList(_context.Person, "Id", "Name", transaction.PersonId);
 
-            return View(transaction);
+            return View(person);
         }
 
-        // GET: Transactions/Create
+        // GET: People/Create
         public IActionResult Create()
         {
-            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["PersonId"] = new SelectList(_context.Person, "Id", "Name");
-            ViewBag.Types = new SelectList(new List<string> { "Wpłata", "Wypłata" });
             return View();
         }
 
-        // POST: Transactions/Create
+        // POST: People/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Amount,CategoryId,Date,Type,PersonId")] Transaction transaction)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Person person)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(transaction);
+                _context.Add(person);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+            return View(person);
         }
 
-        // GET: Transactions/Edit/5
+        // GET: People/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,25 +73,22 @@ namespace Budzet.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction.FindAsync(id);
-            if (transaction == null)
+            var person = await _context.Person.FindAsync(id);
+            if (person == null)
             {
                 return NotFound();
             }
-            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", transaction.CategoryId);
-            ViewBag.Person = new SelectList(_context.Person, "Id", "Name", transaction.PersonId);
-            ViewBag.Types = new SelectList(new List<string> { "Wpłata", "Wypłata" });
-            return View(transaction);
+            return View(person);
         }
 
-        // POST: Transactions/Edit/5
+        // POST: People/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Amount,Category,Date,Type")] Transaction transaction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Person person)
         {
-            if (id != transaction.Id)
+            if (id != person.Id)
             {
                 return NotFound();
             }
@@ -109,12 +97,12 @@ namespace Budzet.Controllers
             {
                 try
                 {
-                    _context.Update(transaction);
+                    _context.Update(person);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TransactionExists(transaction.Id))
+                    if (!PersonExists(person.Id))
                     {
                         return NotFound();
                     }
@@ -125,10 +113,10 @@ namespace Budzet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+            return View(person);
         }
 
-        // GET: Transactions/Delete/5
+        // GET: People/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,34 +124,34 @@ namespace Budzet.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction
+            var person = await _context.Person
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (transaction == null)
+            if (person == null)
             {
                 return NotFound();
             }
 
-            return View(transaction);
+            return View(person);
         }
 
-        // POST: Transactions/Delete/5
+        // POST: People/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var transaction = await _context.Transaction.FindAsync(id);
-            if (transaction != null)
+            var person = await _context.Person.FindAsync(id);
+            if (person != null)
             {
-                _context.Transaction.Remove(transaction);
+                _context.Person.Remove(person);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TransactionExists(int id)
+        private bool PersonExists(int id)
         {
-            return _context.Transaction.Any(e => e.Id == id);
+            return _context.Person.Any(e => e.Id == id);
         }
     }
 }

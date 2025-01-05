@@ -23,5 +23,9 @@ namespace Budzet.Models
         [Display(Name = "Typ Trasakcji")]
         [Required(ErrorMessage = "Typ jest wymagany.")]
         public string? Type { get; set; } //wpłata albo wypłata
+        public int PersonId { get; set; } // Klucz obcy
+        [ForeignKey("PersonId")]
+        [Display(Name = "Osoba")]
+        public Person? Person { get; set; } // Nawigacja
     }
 }
