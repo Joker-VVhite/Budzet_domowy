@@ -10,22 +10,22 @@ using Budzet.Models;
 
 namespace Budzet.Controllers
 {
-    public class TransactionsController : Controller
+    public class CategoriesController : Controller
     {
         private readonly BudzetContext _context;
 
-        public TransactionsController(BudzetContext context)
+        public CategoriesController(BudzetContext context)
         {
             _context = context;
         }
 
-        // GET: Transactions
+        // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Transaction.ToListAsync());
+            return View(await _context.Categories.ToListAsync());
         }
 
-        // GET: Transactions/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,41 +33,39 @@ namespace Budzet.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction
+            var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (transaction == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(transaction);
+            return View(category);
         }
 
-        // GET: Transactions/Create
+        // GET: Categories/Create
         public IActionResult Create()
         {
-            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
-            ViewBag.Types = new SelectList(new List<string> { "Wpłata", "Wypłata" });
             return View();
         }
 
-        // POST: Transactions/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Amount,Category,Date,Type")] Transaction transaction)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(transaction);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+            return View(category);
         }
 
-        // GET: Transactions/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,24 +73,22 @@ namespace Budzet.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction.FindAsync(id);
-            if (transaction == null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", transaction.CategoryId);
-            ViewBag.Types = new SelectList(new List<string> { "Wpłata", "Wypłata" });
-            return View(transaction);
+            return View(category);
         }
 
-        // POST: Transactions/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Amount,Category,Date,Type")] Transaction transaction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
         {
-            if (id != transaction.Id)
+            if (id != category.Id)
             {
                 return NotFound();
             }
@@ -101,12 +97,12 @@ namespace Budzet.Controllers
             {
                 try
                 {
-                    _context.Update(transaction);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TransactionExists(transaction.Id))
+                    if (!CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -117,10 +113,10 @@ namespace Budzet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+            return View(category);
         }
 
-        // GET: Transactions/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,34 +124,34 @@ namespace Budzet.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction
+            var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (transaction == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(transaction);
+            return View(category);
         }
 
-        // POST: Transactions/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var transaction = await _context.Transaction.FindAsync(id);
-            if (transaction != null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
             {
-                _context.Transaction.Remove(transaction);
+                _context.Categories.Remove(category);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TransactionExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Transaction.Any(e => e.Id == id);
+            return _context.Categories.Any(e => e.Id == id);
         }
     }
 }

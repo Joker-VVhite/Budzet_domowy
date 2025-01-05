@@ -15,5 +15,6 @@ namespace Budzet.Data
         }
 
         public DbSet<Budzet.Models.Transaction> Transaction { get; set; } = default!;
+        public DbSet<Budzet.Models.Category> Categories { get; set; } = default!;
     }
 }

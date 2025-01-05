@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Budzet.Models
 {
@@ -11,8 +12,10 @@ namespace Budzet.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Kwota musi być większa niż zero.")]
         public decimal Amount { get; set; }
         [Display(Name = "Kategoria")]
-        [Required(ErrorMessage = "Kategoria jest wymagana.")]
-        public string? Category { get; set; }
+        public int CategoryId { get; set; } // Klucz obcy
+
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; } // Nawigacja
         [Display(Name = "Data transakcji")]
         public DateTime Date { get; set; }
         [Display(Name = "Typ Trasakcji")]
