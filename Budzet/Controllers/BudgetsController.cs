@@ -32,11 +32,11 @@ namespace Budzet.Controllers
                 .Where(t => t.Type == "Wpłata").Sum(t => t.Amount)
                 - transactions.Where(t => t.Type == "Wypłata").Sum(t => t.Amount);
 
-            // Grupowanie transakcji według kategorii
+            // Grupowanie tylko transakcji typu "Wypłata" (wydatki) według kategorii
             var groupedData = transactions
-                .Where(t => t.Category != null) // Ignoruj transakcje bez kategorii
+                .Where(t => t.Type == "Wypłata" && t.Category != null) // Tylko wypłaty z istniejącą kategorią
                 .GroupBy(t => t.Category.Name)
-                .Select(g => new
+                        .Select(g => new
                 {
                     Category = g.Key,
                     Total = g.Sum(t => t.Amount)
