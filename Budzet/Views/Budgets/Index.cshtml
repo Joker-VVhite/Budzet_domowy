@@ -21,16 +21,23 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var transaction in ViewBag.LastTransactions)
+                 @foreach (var item in ViewBag.LastTransactions)
+        {
+            <tr>
+                <td >@item.Title</td>
+                @if (@item.Type == "Wypłata"){
+
+                    <td> <span style="font-weight:bold;color:#ff0000;">-@item.Amount</span> zł</td>
+        }
+                else
                 {
-                    <tr>
-                        <td>@transaction.Title</td>
-                        <td>@transaction.Amount PLN</td>
-                        <td>@transaction.Category?.Name</td>
-                        <td>@transaction.Date.ToShortDateString()</td>
-                        <td>@transaction.Type</td>
-                    </tr>
+                    <td> <span style="font-weight:bold;color:#2ff227">+@item.Amount</span> zł</td>
                 }
+                <td>@item.Type</td>
+                <td></td>
+            </tr>
+        }
+        }
             </tbody>
         </table>
     </div>
