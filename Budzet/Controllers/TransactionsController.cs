@@ -46,6 +46,8 @@ namespace Budzet.Controllers
         // GET: Transactions/Create
         public IActionResult Create()
         {
+            ViewBag.Categories = new SelectList(new List<string> { "Jedzenie", "Transport", "Rozrywka", "Inne" });
+            ViewBag.Types = new SelectList(new List<string> { "Wpłata", "Wypłata" });
             return View();
         }
 
@@ -78,6 +80,8 @@ namespace Budzet.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Categories = new SelectList(new List<string> { "Jedzenie", "Transport", "Rozrywka", "Inne" });
+            ViewBag.Types = new SelectList(new List<string> { "Wpłata", "Wypłata" });
             return View(transaction);
         }
 
