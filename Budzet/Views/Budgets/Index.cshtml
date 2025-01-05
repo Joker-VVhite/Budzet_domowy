@@ -1,0 +1,21 @@
+﻿<h1>Budżet</h1>
+<p>Całkowity Budżet: @ViewBag.TotalAmount zł</p>
+
+<h3>Ostatnie transakcje</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+           <th>Kwota</th>          
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.LastTransactions)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Amount</td>              
+            </tr>
+        }
+    </tbody>
+</table>
